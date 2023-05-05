@@ -320,6 +320,9 @@ to the following
 ```
 <input @keyup.13="inputMethod2(val2 + ' A TEST.')">
 ```
+#### `v-on:submit`
+This is a follow up on [Custom components](#custom-components)
+
 ### Custom components
 Create custom components. Custom components can be styled by using   ```<style></style>```.
 ```
@@ -359,7 +362,7 @@ Create custom components. Custom components can be styled by using   ```<style><
                     <div>
                         <h1>{{title}}</h1>
                         <input type = "email"/>
-                        <input type = "password"/>
+                        <input type = "password"/> 
                     </div>
                 `,
                 data() {
@@ -373,7 +376,8 @@ Create custom components. Custom components can be styled by using   ```<style><
     </body>
 </html>
 ```
-### ``
+
+
 
 ### Reference
 - https://vuejs.org/guide/quick-start.html#creating-a-vue-application [Date of Access: 28/04/2023]
