@@ -192,8 +192,9 @@ However, you will notice that all components of ```v-if```, ```v-else-if```, and
     </body>
 </html>
 ```
-### v-on
+### `v-on`
 ```v-on``` is an event handler similar onClick(). The example below will show ```v-on``` **set to manage click events** and perform certain instructions. 
+#### `v-on:click`
 ```
 <!DOCTYPE html>
 <html>
@@ -217,7 +218,7 @@ However, you will notice that all components of ```v-if```, ```v-else-if```, and
     </body>
 </html>
 ```
-We can set it to toggle by replacing ```v-on:click="val = true"``` to v-on:click="val = !val"  
+We can set it to toggle by replacing ```v-on:click="val = true"``` to ```v-on:click="val = !val"```  
 The code below works the same as the ones above.
 ```
 <!DOCTYPE html>
@@ -271,6 +272,7 @@ To increase the functionality of the event handler, we can set it to reference a
     </body>
 </html>
 ```
+#### `v-on:keyup`
 The example below will set ```v-on``` to **manage keyboard events**.
 ```
 <!DOCTYPE html>
@@ -318,6 +320,61 @@ to the following
 ```
 <input @keyup.13="inputMethod2(val2 + ' A TEST.')">
 ```
+### Custom components
+Create custom components. Custom components can be styled by using   ```<style></style>```.
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        </style>
+    </head>
+    <body>
+        <div id = "test">
+            <custom-form/>
+        </div>
+        <script src="https://unpkg.com/vue@next"/>
+        <script>
+            let app = Vue.createApp({
+                data:function() {
+                    return {
+                        val: true,
+                        val2: 'message'
+                    }
+                },
+                methods: {
+                    afunction() {
+                        this.val = !this.val
+                    },
+                    inputMethod() {
+                        console.log(this.val2)
+                    },
+                    inputMethod2(val2) {
+                        console.log(val2)
+                    }
+                }
+            })
+            app.component('custom-form', {
+                someForm: `
+                    <div>
+                        <h1>{{title}}</h1>
+                        <input type = "email"/>
+                        <input type = "password"/>
+                    </div>
+                `,
+                data() {
+                    return {
+                        title: 'A Form'
+                    }
+                }
+            })
+            app.mount('#test')
+        </script>
+    </body>
+</html>
+```
+### ``
+
 ### Reference
 - https://vuejs.org/guide/quick-start.html#creating-a-vue-application [Date of Access: 28/04/2023]
 - https://www.youtube.com/watch?v=FXpIoQ_rT_c&t=85s [Date of Access: 28/04/2023]
