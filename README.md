@@ -321,7 +321,66 @@ to the following
 <input @keyup.13="inputMethod2(val2 + ' A TEST.')">
 ```
 #### `v-on:submit`
-This is a follow up on [Custom components](#custom-components)
+This is a follow up on [Custom components](#custom-components). The function allows user to perform operation such as post. If ```@submit``` is used without ```@submit.prevent```, the webpage will have the refresh effect.
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        </style>
+    </head>
+    <body>
+        <div id = "test">
+            <custom-form/>
+        </div>
+        <script src="https://unpkg.com/vue@next"/>
+        <script>
+            let app = Vue.createApp({
+                data:function() {
+                    return {
+                        val: true,
+                        val2: 'message'
+                    }
+                },
+                methods: {
+                    afunction() {
+                        this.val = !this.val
+                    },
+                    inputMethod() {
+                        console.log(this.val2)
+                    },
+                    inputMethod2(val2) {
+                        console.log(val2)
+                    }
+                }
+            })
+            app.component('custom-form', {
+                someForm: `
+                    <form @submit.prevent="handleSubmit">
+                        <h1>{{title}}</h1>
+                        <input type = "email" v-model="email"/>
+                        <input type = "password" v-model="password"/>
+                        <button>Login</button>
+                    </form>
+                `,
+                data() {
+                    return {
+                        title: 'A Form',
+                        email: '',
+                        password: ''
+                    }
+                },
+                methods: {
+                    handleSubmit() {
+                        console.log(this.email, this.password)
+                    }
+                }
+            })
+            app.mount('#test')
+        </script>
+    </body>
+</html>
+```
 
 ### Custom components
 Create custom components. Custom components can be styled by using   ```<style></style>```.
@@ -376,8 +435,359 @@ Create custom components. Custom components can be styled by using   ```<style><
     </body>
 </html>
 ```
+### Calling components within a component
+We can call a component within a component by declaring using ```components``` and feeding it with an array of component we intend to use. ```components: ['custom-input']```
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        </style>
+    </head>
+    <body>
+        <div id = "test">
+            <custom-form/>
+        </div>
+        <script src="https://unpkg.com/vue@next"/>
+        <script>
+            let app = Vue.createApp({
+                data:function() {
+                    return {
+                        val: true,
+                        val2: 'message'
+                    }
+                },
+                methods: {
+                    afunction() {
+                        this.val = !this.val
+                    },
+                    inputMethod() {
+                        console.log(this.val2)
+                    },
+                    inputMethod2(val2) {
+                        console.log(val2)
+                    }
+                }
+            })
+            app.component('custom-form', {
+                someForm: `
+                    <form @submit.prevent="handleSubmit">
+                        <h1>{{title}}</h1>
+                        <custom-input type = "email" v-model="email"/>
+                        <custom-input type = "password" v-model="password"/>
+                        <button>Login</button>
+                    </form>
+                `,
+                components:['custom-input']
+                data() {
+                    return {
+                        title: 'A Form',
+                        email: '',
+                        password: ''
+                    }
+                },
+                methods: {
+                    handleSubmit() {
+                        console.log(this.email, this.password)
+                    }
+                }
+            })
+            app.component('custom-input', {
+                template:
+                    <label>
+                        {{ label }}
+                        <input type="text"/>
+                    </label>
+            })
+            app.mount('#test')
+        </script>
+    </body>
+</html>
+```
+We could also pass data from one component to another component using ***v-bind***. For the sub component to accept the variable, ```props``` will have to be declared. For short notation, we can use ```:``` instead of ```v-bind:```.
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        </style>
+    </head>
+    <body>
+        <div id = "test">
+            <custom-form/>
+        </div>
+        <script src="https://unpkg.com/vue@next"/>
+        <script>
+            let app = Vue.createApp({
+                data:function() {
+                    return {
+                        val: true,
+                        val2: 'message'
+                    }
+                },
+                methods: {
+                    afunction() {
+                        this.val = !this.val
+                    },
+                    inputMethod() {
+                        console.log(this.val2)
+                    },
+                    inputMethod2(val2) {
+                        console.log(val2)
+                    }
+                }
+            })
+            app.component('custom-form', {
+                someForm: `
+                    <form @submit.prevent="handleSubmit">
+                        <h1>{{title}}</h1>
+                        <custom-input type = "email" v-bind:label="emailLabel"/>
+                        <custom-input type = "password" v-bind:label="passwordLabel"/>
+                        <button>Login</button>
+                    </form>
+                `,
+                components:['custom-input']
+                data() {
+                    return {
+                        title: 'A Form',
+                        email: '',
+                        password: '',
+                        emailLabel: 'Email: ',
+                        passwordLabel: 'Password: '
+                    }
+                },
+                methods: {
+                    handleSubmit() {
+                        console.log(this.email, this.password)
+                    }
+                }
+            })
+            app.component('custom-input', {
+                template: `
+                    <label>
+                        {{ label }}
+                        <input type="text" v-model="value"/>
+                    </label>
+                `,
+                props: ['label'],
+                data() {
+                    return {
+                        value: ''
+                    }
+                }
+            })
+            app.mount('#test')
+        </script>
+    </body>
+</html>
+```
+However, the reverse will be a little complicated. To retrieve data from the child, we can use ```computed```. ```Get``` will retrieve value from parent component and ```Set``` will be used to retrieve from the child component. ```v-model``` contains a child property of ```modelValue```, thus we could retrieve value of ```v-modal``` by declaring the parameter ```modelValue``` in props.
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        </style>
+    </head>
+    <body>
+        <div id = "test">
+            <custom-form/>
+        </div>
+        <script src="https://unpkg.com/vue@next"/>
+        <script>
+            let app = Vue.createApp({
+                data:function() {
+                    return {
+                        val: true,
+                        val2: 'message'
+                    }
+                },
+                methods: {
+                    afunction() {
+                        this.val = !this.val
+                    },
+                    inputMethod() {
+                        console.log(this.val2)
+                    },
+                    inputMethod2(val2) {
+                        console.log(val2)
+                    }
+                }
+            })
+            app.component('custom-form', {
+                someForm: `
+                    <form @submit.prevent="handleSubmit">
+                        <h1>{{title}}</h1>
+                        <custom-input type = "email" v-bind:label="emailLabel" v-model="email"/>
+                        <custom-input type = "password" v-bind:label="passwordLabel" v-model="password"/>
+                        <button>Login</button>
+                    </form>
+                `,
+                components:['custom-input']
+                data() {
+                    return {
+                        title: 'A Form',
+                        email: '',
+                        password: '',
+                        emailLabel: 'Email: ',
+                        passwordLabel: 'Password: '
+                    }
+                },
+                methods: {
+                    handleSubmit() {
+                        console.log(this.email, this.password)
+                    }
+                }
+            })
+            app.component('custom-input', {
+                template: `
+                    <label>
+                        {{ label }}
+                        <input type="text" v-model="value"/>
+                    </label>
+                `,
+                props: ['label', 'modelValue'],
+                computed: {
+                    value: {
+                        get() {
+                            return this.modelValue
+                        },
+                        set(values) {
+                            this.$emit('update:modelValue, values') 
+                        }
+                    }
+                }
+                data() {
+                    return {
+                        value: ''
+                    }
+                }
+            })
+            app.mount('#test')
+        </script>
+    </body>
+</html>
+```
 
+### Looping , `v-for`
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        </style>
+    </head>
+    <body>
+        <div id = "test">
+            <custom-form/>
+        </div>
+        <script src="https://unpkg.com/vue@next"/>
+        <script>
+            app.component('custom-form', {
+                someForm: `
+                    <form @submit.prevent="handleSubmit">
+                        <h1>{{title}}</h1>
+                        <p v-for="str in inputs" v-bind:key="str">{{str}}</p>
+                        <p v-for="(str, i) in inputs" v-bind:key="i">{{i}}</p>
 
+                    </form>
+                `,
+                components:['custom-input']
+                data() {
+                    return {
+                        title: 'A Form',
+                        inputs:[
+                            'email',
+                            'password',
+                            'name'
+                        ]
+                    }
+                }
+            })
+            app.mount('#test')
+        </script>
+    </body>
+</html> 
+```
+### Looping through components
+We can use for loop when we have multiple entries of the same component.
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        </style>
+    </head>
+    <body>
+        <div id = "test">
+            <custom-form/>
+        </div>
+        <script src="https://unpkg.com/vue@next"/>
+        <script>
+            app.component('custom-form', {
+                someForm: `
+                    <form @submit.prevent="handleSubmit">
+                        <custom-input v-for="(input, i) in inputs" :key="i" v-model="input.value" :label="input.label" type="input.type"
+                        <button>Login</button>
+                    </form>
+                `,
+                components:['custom-input']
+                data() {
+                    return {
+                        title: 'A Form',
+                        inputs:[
+                            {
+                                label: 'Email',
+                                value: '',
+                                type: 'email'
+                            },
+                                                        {
+                                label: 'Password',
+                                value: '',
+                                type: 'password'
+                            },
+                        ],
+                        email: '',
+                        password: '',
+                        emailLabel: 'Email: ',
+                        passwordLabel: 'Password: '
+                    }
+                },
+                methods: {
+                    handleSubmit() {
+                        console.log(this.inputs[0].value, this.inputs[1].value)
+                    }
+                }
+            })
+            app.component('custom-input', {
+                template: `
+                    <label>
+                        {{ label }}
+                        <input :type="text" v-model="value"/>
+                    </label>
+                `,
+                props: ['label', 'type', 'modelValue'],
+                computed: {
+                    value: {
+                        get() {
+                            return this.modelValue
+                        },
+                        set(values) {
+                            this.$emit('update:modelValue, values') 
+                        }
+                    }
+                }
+                data() {
+                    return {
+                        value: ''
+                    }
+                }
+            })
+            app.mount('#test')
+        </script>
+    </body>
+</html> 
+```
 
 ### Reference
 - https://vuejs.org/guide/quick-start.html#creating-a-vue-application [Date of Access: 28/04/2023]
