@@ -683,6 +683,7 @@ However, the reverse will be a little complicated. To retrieve data from the chi
         </div>
         <script src="https://unpkg.com/vue@next"/>
         <script>
+            let app = Vue.createApp({})
             app.component('custom-form', {
                 someForm: `
                     <form @submit.prevent="handleSubmit">
@@ -724,6 +725,7 @@ We can use for loop when we have multiple entries of the same component.
         </div>
         <script src="https://unpkg.com/vue@next"/>
         <script>
+            let app = Vue.createApp({})
             app.component('custom-form', {
                 someForm: `
                     <form @submit.prevent="handleSubmit">
@@ -788,7 +790,79 @@ We can use for loop when we have multiple entries of the same component.
     </body>
 </html> 
 ```
+### Lifecycle Hooks
+Lifecycle Hooks performs similarly to actions such as on-mouseClick and on-mouseRelease. However, the difference is that Lifecycle hooks trigger events for components that is entering and leaving the DOM or when it is being removed from the system. The work flow of the lifecycle hooks can be found [here](https://vuejs.org/guide/essentials/lifecycle.html).
+```
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+        <style>
+            .box {
+                background-color:black;
+                height:100px;
+                width:100px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "app">
+            <button @click="toggleBox">Toggle Box</botton>
+            <test-box v-if="isVisible"/>
+        </div>
+        <script src="https://upkg.com/vue@next"/>
+        <script>
+            let app = Vue.createApp({
+                data: function() {
+                    return {
+                        isVisible: false
+                    }
+                },
+                methods:{
+                    toggleBox: function() {
+                        this.isVisible = !this.isVisible
+                    }
+                }
+            })
+            app.component('test-box', {
+                template: `
+                    <div class="box"/>
+                `,
+                created() {
+                    console.log("created")
+                },
+                mounted() {
+                    console.log("mounted")
+                },
+                unmounted() {
+                    console.log("unmounted")
+                }
+            })
+            app.mount('@app')
+        </script>
+    </body>
+</html>
+```
+
+### Bootstrap
+Add the following code for main.js
+```
+import "boostrap/dist/css/bootstrap.css"
+import Vue from "vue"
+import App from "./App.vue"
+
+Vue.config.productionTip = false
+
+new Vue({
+    render: h => h(App),
+})
+.$mount('#app')
+
+import "bootstrap/dist/js/bootstrap.js"
+```
+
 
 ### Reference
 - https://vuejs.org/guide/quick-start.html#creating-a-vue-application [Date of Access: 28/04/2023]
 - https://www.youtube.com/watch?v=FXpIoQ_rT_c&t=85s [Date of Access: 28/04/2023]
+- https://www.youtube.com/watch?v=oZ9zlS5V5WU [Date of Access: 09/05/2023]
