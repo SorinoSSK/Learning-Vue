@@ -30,6 +30,11 @@ npm install
 ```sh
 npm run dev
 ```
+
+**If vite is note found**
+```
+npm install vite
+```
 ## Compile and Minify for Production
 ```sh
 npm run build
