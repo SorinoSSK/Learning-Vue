@@ -1,4 +1,4 @@
-# Learning Vue
+# Vue Notes
 
 This repository contain a learning guide for me to pick up on vue.js. References of the content can be found at the very end of this repository. 
 
